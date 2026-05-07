@@ -1,6 +1,6 @@
 import { Timestamp } from 'firebase/firestore';
 
-export type FaultStatus = 'open' | 'fixed';
+export type FaultStatus = 'open' | 'in_progress' | 'fixed';
 
 export interface Fault {
   id: string;
@@ -13,4 +13,5 @@ export interface Fault {
   updatedAt: Timestamp;
   createdBy: string;
   imageUrl?: string;
+  treatmentNote?: string;
 }

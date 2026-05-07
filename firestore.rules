@@ -18,19 +18,24 @@ service cloud.firestore {
     function isValidFault(data) {
       return data.keys().hasAll(['title', 'description', 'location', 'reporterName', 'status', 'createdAt', 'updatedAt', 'createdBy'])
         && (!('imageUrl' in data) || (data.imageUrl is string && data.imageUrl.size() <= 1000000))
+        && (!('treatmentNote' in data) || (data.treatmentNote is string && data.treatmentNote.size() <= 1000))
         && data.title is string && data.title.size() > 0 && data.title.size() <= 100
         && data.description is string && data.description.size() >= 0 && data.description.size() <= 1000
         && data.location is string && data.location.size() > 0 && data.location.size() <= 100
         && data.reporterName is string && data.reporterName.size() > 0 && data.reporterName.size() <= 100
-        && data.status is string && (data.status == 'open' || data.status == 'fixed')
+        && data.status is string && (data.status == 'open' || data.status == 'in_progress' || data.status == 'fixed')
         && data.createdAt is timestamp
         && data.updatedAt is timestamp
         && data.createdBy is string && data.createdBy == request.auth.uid;
     }
 
     function isCreateFaultValid(data) {
+      let optionalFields = 0;
+      let hasImageUrl = 'imageUrl' in data ? 1 : 0;
+      let hasTreatmentNote = 'treatmentNote' in data ? 1 : 0;
+      
       return isValidFault(data)
-        && (data.keys().size() == 8 || (data.keys().size() == 9 && 'imageUrl' in data))
+        && data.keys().size() == 8 + hasImageUrl + hasTreatmentNote
         && data.createdAt == request.time
         && data.updatedAt == request.time;
     }
@@ -62,10 +67,12 @@ service cloud.firestore {
         && isValidFault(incoming())
         && isUpdateFaultValid(incoming(), existing())
         && (
-          // Action: Mark Fixed / Open (Status update only)
+          // Action: Mark Fixed / Open / In Progress (Status update only)
           (incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt'])) ||
+          // Action: Mark In Progress with treatment note
+          (incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt', 'treatmentNote'])) ||
           // Action: Full Update (Teacher updates details)
-          (incoming().diff(existing()).affectedKeys().hasOnly(['title', 'description', 'location', 'status', 'updatedAt', 'imageUrl']))
+          (incoming().diff(existing()).affectedKeys().hasOnly(['title', 'description', 'location', 'status', 'updatedAt', 'imageUrl', 'treatmentNote']))
         );
 
       // Delete: Let any signed-in user delete faults (for example, maintenance removes fixed faults or teacher removes mistake)

@@ -27,7 +27,7 @@
         },
         "status": {
           "type": "string",
-          "enum": ["open", "fixed"],
+          "enum": ["open", "in_progress", "fixed"],
           "description": "Current status of the fault"
         },
         "createdAt": {
@@ -47,6 +47,11 @@
         "imageUrl": {
           "type": "string",
           "description": "Base64 encoded image of the fault, max 900KB"
+        },
+        "treatmentNote": {
+          "type": "string",
+          "description": "Notes about continued treatment",
+          "maxLength": 1000
         }
       },
       "required": ["title", "description", "location", "reporterName", "status", "createdAt", "updatedAt", "createdBy"]
