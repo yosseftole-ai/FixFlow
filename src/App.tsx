@@ -90,8 +90,8 @@ function Dashboard() {
     return (
       <div className="h-screen w-full flex flex-col items-center justify-center bg-slate-50 p-4 text-center text-slate-900">
         <div className="bg-white p-10 rounded-2xl shadow-sm border border-slate-200 flex flex-col items-center max-w-md w-full">
-          <div className="w-16 h-16 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-3xl mb-6 shadow-sm">
-            י
+          <div className="h-24 mb-6 flex items-center justify-center">
+            <img src="/logo.png" alt="לוגו המערכת" className="h-full object-contain" />
           </div>
           <h1 className="text-2xl font-bold text-slate-800 mb-2">מערכת דיווחי תקלות - ישיבת צביה אלישיב</h1>
           <p className="text-sm text-slate-500 mb-8 max-w-[280px]">
@@ -112,8 +112,8 @@ function Dashboard() {
     <div dir="rtl" className="h-screen w-full flex flex-col bg-slate-50 font-sans overflow-hidden text-slate-900">
       <nav className="h-16 px-4 md:px-8 flex items-center justify-between bg-white border-b border-slate-200 shadow-sm shrink-0">
         <div className="flex items-center gap-4">
-          <div className="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
-            י
+          <div className="h-10 pr-2 flex items-center justify-center">
+            <img src="/logo.png" alt="לוגו" className="h-full object-contain" />
           </div>
           <div className="hidden sm:block">
             <h1 className="text-xl font-bold tracking-tight text-slate-800">מערכת דיווחי תקלות - ישיבת צביה אלישיב</h1>
