@@ -50,6 +50,7 @@ function Dashboard() {
 
   const stats = useMemo(() => {
     const openCount = faults.filter(f => f.status === 'open').length;
+    const inProgressCount = faults.filter(f => f.status === 'in_progress').length;
     
     const now = new Date();
     const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -57,24 +58,10 @@ function Dashboard() {
       f.status === 'fixed' && f.updatedAt && f.updatedAt.toDate() > oneWeekAgo
     ).length;
 
-    let totalDiff = 0;
-    let fixedCount = 0;
-    faults.forEach(f => {
-      if (f.status === 'fixed' && f.createdAt && f.updatedAt) {
-         const diffMs = f.updatedAt.toDate().getTime() - f.createdAt.toDate().getTime();
-         if (diffMs >= 0) {
-           totalDiff += diffMs;
-           fixedCount++;
-         }
-      }
-    });
-
-    const avgHours = fixedCount > 0 ? (totalDiff / fixedCount / (1000 * 60 * 60)) : 0;
-
     return {
       openCount,
-      fixedThisWeek,
-      avgHours: avgHours > 0 ? avgHours.toFixed(1) : '0'
+      inProgressCount,
+      fixedThisWeek
     };
   }, [faults]);
 
@@ -146,32 +133,30 @@ function Dashboard() {
         </div>
       </nav>
 
-      <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar Stats */}
-        <aside className="w-64 bg-white border-l border-slate-200 p-6 flex-col gap-6 shrink-0 lg:flex hidden">
+      <div className="flex flex-col lg:flex-row flex-1 overflow-y-auto lg:overflow-hidden">
+        {/* Responsive Stats Panel */}
+        <aside className="w-full lg:w-64 bg-white border-b lg:border-b-0 lg:border-l border-slate-200 p-4 lg:p-6 shrink-0 lg:overflow-y-auto">
           <div>
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">סטטיסטיקת המערכת</h3>
-            <div className="space-y-4">
+            <h3 className="hidden lg:block text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">סטטיסטיקת המערכת</h3>
+            <div className="grid grid-cols-3 lg:grid-cols-1 gap-3 lg:gap-4">
+              <div className="p-3 bg-red-50 border border-red-100 rounded-xl">
+                <p className="text-[10px] sm:text-xs text-red-700 font-bold shrink-0">תקלות פעילות</p>
+                <p className="text-xl sm:text-2xl font-black text-red-800">{stats.openCount}</p>
+              </div>
               <div className="p-3 bg-amber-50 border border-amber-100 rounded-xl">
-                <p className="text-xs text-amber-700 font-bold">תקלות פעילות</p>
-                <p className="text-2xl font-black text-amber-800">{stats.openCount}</p>
+                <p className="text-[10px] sm:text-xs text-amber-700 font-bold shrink-0">בטיפול</p>
+                <p className="text-xl sm:text-2xl font-black text-amber-800">{stats.inProgressCount}</p>
               </div>
               <div className="p-3 bg-emerald-50 border border-emerald-100 rounded-xl">
-                <p className="text-xs text-emerald-700 font-bold">טופלו השבוע</p>
-                <p className="text-2xl font-black text-emerald-800">{stats.fixedThisWeek}</p>
-              </div>
-              <div className="p-3 bg-indigo-50 border border-indigo-100 rounded-xl">
-                <p className="text-xs text-indigo-700 font-bold">זמן טיפול ממוצע</p>
-                <p className="text-2xl font-black text-indigo-800">
-                  {stats.avgHours} {stats.avgHours === '1.0' ? "שעה" : "שע'"}
-                </p>
+                <p className="text-[10px] sm:text-xs text-emerald-700 font-bold shrink-0">טופלו השבוע</p>
+                <p className="text-xl sm:text-2xl font-black text-emerald-800">{stats.fixedThisWeek}</p>
               </div>
             </div>
           </div>
         </aside>
 
         {/* Main Dashboard */}
-        <main className="flex-1 flex flex-col p-4 md:p-8 gap-6 overflow-y-auto">
+        <main className="flex-1 flex flex-col p-4 md:p-8 gap-6 lg:overflow-y-auto">
           <FaultList faults={faults} loading={faultsLoading} />
         </main>
       </div>
