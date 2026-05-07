@@ -30,7 +30,7 @@ service cloud.firestore {
 
     function isCreateFaultValid(data) {
       return isValidFault(data)
-        && (data.keys().size() == 8 || (data.keys().size() == 9 && 'imageUrl' in data.keys()))
+        && (data.keys().size() == 8 || (data.keys().size() == 9 && 'imageUrl' in data))
         && data.createdAt == request.time
         && data.updatedAt == request.time;
     }
